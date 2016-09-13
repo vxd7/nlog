@@ -6,6 +6,7 @@
 #include <ctime>
 
 #include "fileIface.h"
+#include "colorize.h"
 
 enum logLevel {
 	DEBUG,
@@ -48,12 +49,16 @@ private:
 
 	bool revertLogLevel = false;
 
-	bool colorize = false;
+	bool colorize = true;
 	std::string logProfile = "default";
 
 	std::string getProfile();
 	std::string timeStamp();
 	std::string getLabel(logLevel lvl);
+
+	std::string getColorMessage(logLevel level, std::string msg);
+	std::string getColorLabel(logLevel lvl);
+
 
 };
 
@@ -155,7 +160,7 @@ std::string Log::getProfile()
 {
     if(logProfile != "default")
    	 return logProfile;
-    else return "";
+    else return " - ";
 }
 
 std::string Log::timeStamp()
@@ -175,15 +180,36 @@ std::string Log::timeStamp()
 
 std::string Log::getLabel(logLevel lvl)
 {
+	std::string label;
     switch(lvl)
     {
-   	 case DEBUG:   return "[DEBUG:"    + getProfile() + ":" + timeStamp() + "]";     break;
-   	 case INFO:    return "[INFO:"     + getProfile() + ":" + timeStamp() + "]";      break;
-   	 case WARNING: return "[WARNING:"  + getProfile() + ":" + timeStamp() + "]";   break;
-   	 case ERROR:   return "[ERROR:"    + getProfile() + ":" + timeStamp() + "]";     break;
-   	 default:      return "[UNDEFINED:"+ getProfile() + ":" + timeStamp() + "]"; break;
+     case DEBUG:   label =  "[DEBUG]";
+   	 case INFO:    label =  "[INFO]";
+   	 case WARNING: label =  "[WARNING]";
+   	 case ERROR:   label =  "[ERROR]";
+   	 default:      label =  "[UNDEFINED]";
     }
+
+	return "[" + timeStamp() + "] " + "[" + getProfile() + "] " + label;
 
 }
 
+std::string Log::getColorMessage(logLevel level, std::string msg)
+{
+}
+std::string Log::getColorLabel(logLevel lvl)
+{
+	
+	std::string label;
+    switch(lvl)
+    {
+     case DEBUG:   label =  applyColor("[DEBUG]", GREEN, DIM);
+   	 case INFO:    label =  applyColor("[INFO]", LCYAN);
+   	 case WARNING: label =  applyColor("[WARNING]", RED);
+   	 case ERROR:   label =  applyColor("[ERROR]", LRED, BOLD);
+   	 default:      label =  applyColor("[UNDEFINED]", BLACK, DIM);
+    }
+
+	return "[" + timeStamp() + "] " + "[" + getProfile() + "] " + label;
+}
 #endif
