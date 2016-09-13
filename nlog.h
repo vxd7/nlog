@@ -38,6 +38,7 @@ public:
 	void setLoggingProfile(std::string profileName);
 	void setLoggingType(logType newType);
 	void setLoggingFile(std::string filename);
+	void setColorLogging(bool isColor);
 
 private:
 	std::ostringstream os;
@@ -64,6 +65,11 @@ private:
 
 
 /* Public functions */
+void setColorLogging(bool isColor)
+{
+	colorize = isColor;
+}
+
 void Log::setLoggingLevel(logLevel level)
 {
 	msgLevel = level;
@@ -85,11 +91,15 @@ Log& Log::logNow(logLevel newLevel)
 template<class T>
 void Log::operator<<(const T &msg)
 {
-	/* If this overload is called, then we have
-	 * already executed the logNow function and 
-	 * is has already returned the needed stream
+	/*
+	 * Main log event -- write to stream
 	 */
-	os << getLabel(msgLevel) << " " << msg << std::endl;
+	if(colorize)
+	{
+		os << getColorLabel(msgLevel) << " " << msg << std::endl;
+	}
+	else
+		os << getLabel(msgLevel) << " " << msg << std::endl;
 
 	if(curLogType == _stdout)
 	{
@@ -173,7 +183,7 @@ std::string Log::timeStamp()
 	const char* type1 = "%Y-%m-%d.%X";
 	const char* type2 = "%X";
 
-	strftime(buf, sizeof(buf), type2, &tstruct);
+	strftime(buf, sizeof(buf), type1, &tstruct);
 
 	return buf;	
 }
@@ -183,11 +193,11 @@ std::string Log::getLabel(logLevel lvl)
 	std::string label;
     switch(lvl)
     {
-     case DEBUG:   label =  "[DEBUG]";
-   	 case INFO:    label =  "[INFO]";
-   	 case WARNING: label =  "[WARNING]";
-   	 case ERROR:   label =  "[ERROR]";
-   	 default:      label =  "[UNDEFINED]";
+     case DEBUG:   label =  "[DEBUG]";     break; 
+   	 case INFO:    label =  "[INFO]";      break; 
+   	 case WARNING: label =  "[WARNING]";   break; 
+   	 case ERROR:   label =  "[ERROR]";     break; 
+   	 default:      label =  "[UNDEFINED]"; break;
     }
 
 	return "[" + timeStamp() + "] " + "[" + getProfile() + "] " + label;
@@ -201,15 +211,22 @@ std::string Log::getColorLabel(logLevel lvl)
 {
 	
 	std::string label;
+	std::string _time;
+	std::string _profile;
+
     switch(lvl)
     {
-     case DEBUG:   label =  applyColor("[DEBUG]", GREEN, DIM);
-   	 case INFO:    label =  applyColor("[INFO]", LCYAN);
-   	 case WARNING: label =  applyColor("[WARNING]", RED);
-   	 case ERROR:   label =  applyColor("[ERROR]", LRED, BOLD);
-   	 default:      label =  applyColor("[UNDEFINED]", BLACK, DIM);
+     case DEBUG:   label =  applyColor("[DEBUG]", GREEN, DIM);     break; 
+   	 case INFO:    label =  applyColor("[INFO]", LCYAN);           break; 
+   	 case WARNING: label =  applyColor("[WARNING]", RED);          break; 
+   	 case ERROR:   label =  applyColor("[ERROR]", LRED, BOLD);     break; 
+   	 default:      label =  applyColor("[UNDEFINED]", BLACK, DIM); break;
     }
 
-	return "[" + timeStamp() + "] " + "[" + getProfile() + "] " + label;
+	_time = applyColor("[" + timeStamp() + "]", DGRAY, DIM);
+	_profile = applyColor("[" + getProfile() + "]", LGRAY);
+
+	return _time + " " + _profile + " " + label;
+
 }
 #endif

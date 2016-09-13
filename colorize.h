@@ -26,10 +26,13 @@ enum c_mod {
 
 std::string getCode(c_color _color, c_mod _mod)
 {
-	return "\033[" + _mod + ';' + _color + 'm';
+	return ("\033[" + _mod + ';' + _color + 'm');
 }
 
 std::string applyColor(const std::string str, c_color _color, c_mod _mod = NORMAL)
 {
-	return getCode(_color, _mod) + str + "\033[0m" + '\n';
+	std::ostringstream os;
+
+	os << "\033[" << _mod << ';' << _color << 'm' << str << "\033[0m";
+	return os.str();
 }
