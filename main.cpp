@@ -33,6 +33,8 @@ int main()
 	mylogger1.setLoggingLevel(ERROR);
 	mylogger2.setLoggingLevel(WARNING);
 
+	mylogger2.setLoggingProfile("CUSTOM_1");
+
 	mylogger1 << "Logger1 info";
 	mylogger2 << "Logger2 info line";
 
@@ -41,6 +43,12 @@ int main()
 	{
 		mylogger1 << i;
 		mylogger2 << 2*i;
+
+		if(i % 3 == 0)
+			mylogger2.setLoggingLevel(INFO);
+
+		if(i % 7 == 0)
+			mylogger2.setLoggingLevel(ERROR);
 	}
 
 
