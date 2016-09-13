@@ -51,6 +51,11 @@ int main()
 			mylogger2.setLoggingLevel(ERROR);
 	}
 
+	mylogger2.setLoggingLevel(DEBUG);
+	mylogger2 << "Warning msg";
+	mylogger2.logNow(INFO) << "INFO LOGGER 2";
+	mylogger2 << "Reverted number 2";
+
 
 
 

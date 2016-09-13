@@ -43,7 +43,10 @@ private:
 	FileInterface fileIface;
 
 	logLevel msgLevel = INFO;
+	logLevel defaultLevel = INFO;
 	logType curLogType= _stdout;
+
+	bool revertLogLevel = false;
 
 	bool colorize = false;
 	std::string logProfile = "default";
@@ -59,6 +62,7 @@ private:
 void Log::setLoggingLevel(logLevel level)
 {
 	msgLevel = level;
+	defaultLevel = level;
 }
 
 Log& Log::logNow(logLevel newLevel)
@@ -66,6 +70,7 @@ Log& Log::logNow(logLevel newLevel)
 	if(newLevel >= msgLevel)
 	{
 		msgLevel = newLevel;
+		revertLogLevel = true;
 	}
 
 	return *this;
@@ -91,6 +96,15 @@ void Log::operator<<(const T &msg)
 	else
 	{
 		fileIface.WriteToFile(os.str().c_str());
+	}
+
+	/*
+	 * Change logging level back if needed
+	 */
+	if(revertLogLevel)
+	{
+		msgLevel = defaultLevel;
+		revertLogLevel = false;
 	}
 
 	/*
