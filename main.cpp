@@ -22,6 +22,15 @@ int main()
 {
 	//LALALALALA
 	
+	Log logger1, logger2;
+	std::string fname1, fname2;
+
+	fname1 = logger1.mkLogFname("neuron", 
+
+	return 0;
+
+}
+	/* 
 	Log mylogger1;
 	Log mylogger2;
 
@@ -63,7 +72,4 @@ int main()
 	//mylogger1.setLoggingProfile("PROFILE 1");
 //mylogger1 << "Profile logging";
 	//mylogger1.logNow(INFO) << "SUKA";
-
-	return 0;
-
-}
+	*/

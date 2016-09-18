@@ -40,6 +40,9 @@ public:
 	void setLoggingFile(std::string filename);
 	void setColorLogging(bool isColor);
 
+	std::string mkLogFname(std::string basename, std::string baseExt = ".log", bool includeTime = true);
+	std::string mkLogFname(std::string basename, bool includeTime = true);
+
 private:
 	std::ostringstream os;
 	FileInterface fileIface;
@@ -54,7 +57,7 @@ private:
 	std::string logProfile = "default";
 
 	std::string getProfile();
-	std::string timeStamp();
+	std::string timeStamp(int type);
 	std::string getLabel(logLevel lvl);
 
 	std::string getColorMessage(logLevel level, std::string msg);
@@ -65,7 +68,26 @@ private:
 
 
 /* Public functions */
-void setColorLogging(bool isColor)
+std::string mkLogFname(std::string basename, std::string baseExt = ".log", bool includeTime = true)
+{
+	std::resName;
+
+	if(includeTime)
+		resName = basename + "_" + timeStamp(1) + baseExt;
+	else
+		resName = basename + baseExt;
+
+	setLoggingFile(resName);
+	setLoggingType(_file);
+
+	return resName;
+}
+std::string mkLogFname(std::string basename, bool includeTime = true)
+{
+	
+}
+
+void Log::setColorLogging(bool isColor)
 {
 	colorize = isColor;
 }
@@ -96,7 +118,7 @@ void Log::operator<<(const T &msg)
 	 */
 	if(colorize)
 	{
-		os << getColorLabel(msgLevel) << " " << msg << std::endl;
+		os << getColorMessage(msgLevel, msg);
 	}
 	else
 		os << getLabel(msgLevel) << " " << msg << std::endl;
@@ -173,7 +195,7 @@ std::string Log::getProfile()
     else return " - ";
 }
 
-std::string Log::timeStamp()
+std::string Log::timeStamp(int type)
 {
 	time_t     now = time(0);
 	struct tm  tstruct;
@@ -183,7 +205,14 @@ std::string Log::timeStamp()
 	const char* type1 = "%Y-%m-%d.%X";
 	const char* type2 = "%X";
 
-	strftime(buf, sizeof(buf), type1, &tstruct);
+	switch(type)
+	{
+		case 1: strftime(buf, sizeof(buf), type1, &tstruct); break;
+		case 2: strftime(buf, sizeof(buf), type2, &tstruct); break;
+		// insert some more cases...
+		default: strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct); break;
+	}
+
 
 	return buf;	
 }
@@ -206,6 +235,12 @@ std::string Log::getLabel(logLevel lvl)
 
 std::string Log::getColorMessage(logLevel level, std::string msg)
 {
+	if(level == ERROR)
+	{
+		return getColorLabel(ERROR) + " " + applyColor(msg, RED) + '\n';
+	}
+	else
+		return getColorLabel(level) + " " + msg + '\n';
 }
 std::string Log::getColorLabel(logLevel lvl)
 {
