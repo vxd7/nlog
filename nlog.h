@@ -53,24 +53,22 @@ private:
 
 	bool revertLogLevel = false;
 
-	bool colorize = true;
+	bool colorize = false;
 	std::string logProfile = "default";
 
 	std::string getProfile();
-	std::string timeStamp(int type);
+	std::string timeStamp(int type = 1);
 	std::string getLabel(logLevel lvl);
 
 	std::string getColorMessage(logLevel level, std::string msg);
 	std::string getColorLabel(logLevel lvl);
-
-
 };
 
 
 /* Public functions */
-std::string mkLogFname(std::string basename, std::string baseExt = ".log", bool includeTime = true)
+std::string Log::mkLogFname(std::string basename, std::string baseExt, bool includeTime)
 {
-	std::resName;
+	std::string resName;
 
 	if(includeTime)
 		resName = basename + "_" + timeStamp(1) + baseExt;
@@ -82,7 +80,7 @@ std::string mkLogFname(std::string basename, std::string baseExt = ".log", bool 
 
 	return resName;
 }
-std::string mkLogFname(std::string basename, bool includeTime = true)
+std::string Log::mkLogFname(std::string basename, bool includeTime)
 {
 	
 }
@@ -202,7 +200,7 @@ std::string Log::timeStamp(int type)
 	char       buf[80];
 	tstruct = *localtime(&now);
 
-	const char* type1 = "%Y-%m-%d.%X";
+	const char* type1 = "%Y-%m-%d.%T";
 	const char* type2 = "%X";
 
 	switch(type)
