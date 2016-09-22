@@ -25,7 +25,17 @@ int main()
 	Log logger1, logger2;
 	std::string fname1, fname2;
 
-	fname1 = logger1.mkLogFname("neuron", 
+	fname1 = logger1.mkLogFname("neuron", ".log", true);
+
+	logger1.setLoggingProfile("NEURON");
+	logger1.setLoggingLevel(INFO);
+	logger1.setColorLogging(true);
+
+	logger1 << "Message 1";
+	logger1 << "Message 2";
+
+	logger1.logNow(ERROR) << "Crit. error in fuckyou";
+	logger1 << "Another message";
 
 	return 0;
 
